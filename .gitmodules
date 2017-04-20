@@ -1,0 +1,3 @@
+[submodule "pyspaces/pyspaces"]
+	path = pyspaces/pyspaces
+	url = git@github.com:oaken-source/pyspaces.git

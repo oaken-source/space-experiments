@@ -1,0 +1,12 @@
+
+# logfiles
+logs/
+
+# compiled javaclass files
+*.class
+
+# source archives
+*.zip
+*.tar.*
+javaspaces/apache-river-*
+javaspaces/river-examples-*
