@@ -6,6 +6,15 @@ fi
 if ! type -p unzip > /dev/null; then
   echo "missing prerequesite: unzip" >&2; exit 2
 fi
+if ! type -p mvn > /dev/null; then
+  echo "missing prerequesite: maven" >&2; exit 2
+fi
+if ! type -p javac > /dev/null; then
+  echo "missing prerequesite: jdk" >&2; exit 2
+fi
+if ! type -p java > /dev/null; then
+  echo "missing prerequesite: jre" >&2; exit 2
+fi
 
 # fetch apache river, if not present
 if [ ! -d apache-river-2.2.2 ]; then
@@ -40,5 +49,8 @@ fi
 
 #  b) build the examples (mvn install && mvn site)
 if [ ! -f $LIB/outrigger.jar ]; then
-  cd river-examples-1.0 && mvn install && mvn site
+  cd river-examples-1.0
+  mvn install
+  mvn site
+  cd ..
 fi

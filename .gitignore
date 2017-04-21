@@ -5,6 +5,9 @@ logs/
 # compiled javaclass files
 *.class
 
+# python virtualenv
+.venv/
+
 # source archives
 *.zip
 *.tar.*
