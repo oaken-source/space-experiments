@@ -1,3 +1,14 @@
+# check whether we're on GNU+Linux or Darwin
+if [[ "$OSTYPE" == "linux-gnu" ]]; then
+	SED=sed
+elif [[ "$OSTYPE" == "darwin"* ]]; then
+	if ! type -p gsed > /dev/null; then
+	  echo "missing prerequesite: gsed" >&2; exit 2
+	fi
+    SED=gsed
+else
+	echo "unkown OS: $OSTYPE" >&2; exit 2
+fi
 
 # check for prerequerites
 if ! type -p wget > /dev/null; then
@@ -41,10 +52,10 @@ export JVM_ARGS="-Djava.security.manager -Djava.security.policy=$(pwd)/server.po
 # enable javaspaces in river-examples. this requires steps a) and b) below:
 #  a) add outrigger dependency to pom.xml in river-examples
 if ! grep -q "<artifactId>outrigger</artifactId>" $RIVER_EXAMPLES_HOME/pom.xml; then
-  sed -i -e'/<dependencies>/a \            <dependency>\n                <groupId>org.apache.river<\/groupId>\n                <artifactId>outrigger<\/artifactId>\n                <version>${jsk.version}<\/version>\n            <\/dependency>' $RIVER_EXAMPLES_HOME/pom.xml
+  $SED -i -e'/<dependencies>/a \            <dependency>\n                <groupId>org.apache.river<\/groupId>\n                <artifactId>outrigger<\/artifactId>\n                <version>${jsk.version}<\/version>\n            <\/dependency>' $RIVER_EXAMPLES_HOME/pom.xml
 fi
 if ! grep -q "<artifactId>outrigger</artifactId>" $RIVER_EXAMPLES_HOME/browser/pom.xml; then
-  sed -i -e'/<dependencies>/a \            <dependency>\n                <groupId>org.apache.river<\/groupId>\n                <artifactId>outrigger<\/artifactId>\n                <version>${jsk.version}<\/version>\n            <\/dependency>' $RIVER_EXAMPLES_HOME/browser/pom.xml
+  $SED -i -e'/<dependencies>/a \            <dependency>\n                <groupId>org.apache.river<\/groupId>\n                <artifactId>outrigger<\/artifactId>\n                <version>${jsk.version}<\/version>\n            <\/dependency>' $RIVER_EXAMPLES_HOME/browser/pom.xml
 fi
 
 #  b) build the examples (mvn install && mvn site)
