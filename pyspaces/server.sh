@@ -28,7 +28,7 @@ running() {
 case $1 in
   start)
       if ! running; then
-        python -m pyspaces &> $logfile &
+        python -m pyspaces --listen 127.0.0.1 --port 10000 &> $logfile &
         echo $! > $pidfile
       fi
       sleep 1
