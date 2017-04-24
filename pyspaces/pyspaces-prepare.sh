@@ -23,7 +23,7 @@ if [ ! -f pyspaces/setup.py ]; then
 fi
 
 # install pyspaces server to virtualenv
-if ! python -c 'from pyspaces import PySpace' &> /dev/null; then
+if ! python -c 'from pyspaces import PySpaceXMLRPCClient' &> /dev/null; then
   cd pyspaces
   python setup.py develop
   cd ..

@@ -3,7 +3,7 @@ import pyspaces
 
 
 def main():
-    p = pyspaces.PySpace('http://localhost:10000')
+    p = pyspaces.PySpaceXMLRPCClient('http://localhost:10000')
     print('consuming %s tuple' % p.take(('hello', None)))
 
 
