@@ -18,13 +18,13 @@ fi
 # activate the virtualenv
 PS1="" source .venv/bin/activate
 
-if [ ! -f pyspaces/setup.py ]; then
+if [ ! -f packages/pyspaces/setup.py ]; then
   git submodule update --init
 fi
 
 # install pyspaces server to virtualenv
 if ! python -c 'from pyspaces import PySpaceXMLRPCClient' &> /dev/null; then
-  cd pyspaces
+  cd packages/pyspaces
   python setup.py develop
   cd ..
 fi

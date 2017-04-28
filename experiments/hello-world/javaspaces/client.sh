@@ -5,7 +5,9 @@
 
 set -e
 
-. javaspaces-prepare.sh
+pushd ../../../ >/dev/null
+. prepare-javaspaces.sh
+popd >/dev/null
 
 cd client
 

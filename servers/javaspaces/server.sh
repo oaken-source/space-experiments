@@ -2,7 +2,10 @@
 
 set -eu
 
-. javaspaces-prepare.sh
+pushd ../../ >/dev/null
+. prepare-javaspaces.sh
+popd >/dev/null
+
 mkdir -p logs
 
 usage() {

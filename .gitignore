@@ -11,5 +11,5 @@ logs/
 # source archives
 *.zip
 *.tar.*
-javaspaces/apache-river-*
-javaspaces/river-examples-*
+apache-river-*
+river-examples-*
