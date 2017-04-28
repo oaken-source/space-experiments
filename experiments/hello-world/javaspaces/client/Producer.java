@@ -19,7 +19,7 @@ public class Producer {
     private static final String MODULE="org.apache.river.examples.hello.client";
 
     public Producer(final String[] args, LifeCycle lc) {
-        System.out.println("this is the producer");
+        System.out.println("this is producer");
         main(args);
     }
 
@@ -27,7 +27,7 @@ public class Producer {
         try {
             LookupLocator ll = new LookupLocator("jini://localhost:4160");
             ServiceRegistrar sr = ll.getRegistrar();
-            System.out.println("Service Registrar: " + sr.getServiceID());
+            //System.out.println("Service Registrar: " + sr.getServiceID());
 
             ServiceTemplate template = new ServiceTemplate(
                     null,
@@ -41,9 +41,10 @@ public class Producer {
             }
 
             JavaSpace space = (JavaSpace) sms.items[0].service;
-            System.out.println("JavaSpace acquired.");
+            //System.out.println("JavaSpace acquired.");
 
             SpaceEntry entry = new SpaceEntry("hello", "world");
+            System.out.print("producing tuple: ");
             System.out.println(entry);
 
             space.write(entry, null, Lease.FOREVER);

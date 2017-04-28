@@ -11,7 +11,7 @@ popd >/dev/null
 
 cd client
 
-make
+make -s
 
 java $JVM_ARGS -jar $LIB/start.jar start-producer.config
 java $JVM_ARGS -jar $LIB/start.jar start-consumer.config

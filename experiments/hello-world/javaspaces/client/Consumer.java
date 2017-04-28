@@ -18,7 +18,7 @@ public class Consumer {
     private static final String MODULE="org.apache.river.examples.hello.client";
 
     public Consumer(final String[] args, LifeCycle lc) {
-        System.out.println("this is the consumer");
+        System.out.println("this is consumer");
         main(args);
     }
 
@@ -26,7 +26,7 @@ public class Consumer {
         try {
             LookupLocator ll = new LookupLocator("jini://localhost:4160");
             ServiceRegistrar sr = ll.getRegistrar();
-            System.out.println("Service Registrar: " + sr.getServiceID());
+            //System.out.println("Service Registrar: " + sr.getServiceID());
 
             ServiceTemplate template = new ServiceTemplate(
                     null,
@@ -40,9 +40,10 @@ public class Consumer {
             }
 
             JavaSpace space = (JavaSpace) sms.items[0].service;
-            System.out.println("JavaSpace acquired.");
+            //System.out.println("JavaSpace acquired.");
 
             SpaceEntry e = (SpaceEntry) space.take(new SpaceEntry(), null, Long.MAX_VALUE);
+            System.out.print("consuming tuple: ");
             System.out.println(e);
 
         } catch (Exception ex) {

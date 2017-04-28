@@ -4,7 +4,7 @@ import pyspaces
 
 def main():
     p = pyspaces.PySpaceXMLRPCClient('http://localhost:10000')
-    print('consuming %s tuple' % p.take(('hello', None)))
+    print('consuming tuple: %s' % str(p.take(('hello', None))))
 
 
 if __name__ == '__main__':

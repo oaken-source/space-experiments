@@ -3,10 +3,10 @@ import pyspaces
 
 
 def main():
-    p = pyspaces.PySpaceXMLRPCClient('http://localhost:10000')
     t = ('hello', 'world')
-    print('producing %s tuple' % str(t))
-    p.put(t)
+    print('producing tuple: %s' % str(t))
+    with pyspaces.PySpaceShMem('HelloWorldPyspace') as space:
+        space.put(t)
 
 
 if __name__ == '__main__':
