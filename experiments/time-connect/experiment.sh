@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-EXP_NAME="Hello World Demo"
+EXP_NAME="Connect MicroBenchmark"
 
 
 javaspaces_setup() {
@@ -30,11 +30,11 @@ pyspaces_xmlrpc_teardown() {
 }
 
 pyspaces_shmem_setup() {
-  find /dev/shm -iname '*helloworldpyspace*' -delete
+  find /dev/shm -iname '*connectmicrobenchpyspace*' -delete
 }
 
 pyspaces_shmem_teardown() {
-  find /dev/shm -iname '*helloworldpyspace*' -delete
+  find /dev/shm -iname '*connectmicrobenchpyspace*' -delete
 }
 
 if [ -z "${1:-}" ]; then

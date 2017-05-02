@@ -1,0 +1,23 @@
+
+microbenchmark
+
+  1xput
+  1xpeek
+  1xtake
+
+  in abhaengigkeit vom space fuelle
+
+  connection time
+
+eine workload
+
+  parallele reduktion
+    n-tupel von floats
+    1-tupel ergebnistupel (singleton)
+    k klienten sollen aggregieren
+
+  groessenordnungen spielen
+    - anzahl der tupel
+    - groesse der tuple
+
+  10.000 x 10.000
