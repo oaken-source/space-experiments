@@ -13,8 +13,10 @@ cd client
 
 make -s
 
-# cold
-time java $JVM_ARGS -jar $LIB/start.jar start-connect.config
+reps=${1:-100}
 
-# war
-time java $JVM_ARGS -jar $LIB/start.jar start-connect.config
+export TIMEFORMAT="r: %lR, u: %lU, s: %lS"
+
+for i in `seq 1 $reps`; do
+  time java $JVM_ARGS -jar $LIB/start.jar start-connect.config
+done

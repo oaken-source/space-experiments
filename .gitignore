@@ -1,6 +1,7 @@
 
 # logfiles
 logs/
+*.time
 
 # compiled javaclass files
 *.class
