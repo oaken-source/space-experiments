@@ -13,10 +13,11 @@ cd client
 
 make -s
 
-reps=${1:-100}
-
-export TIMEFORMAT="r: %lR, u: %lU, s: %lS"
+export operation=$1
+export tupletype=$2
+export level=$3
+reps=${4:-1}
 
 for i in `seq 1 $reps`; do
-  time java $JVM_ARGS -jar $LIB/start.jar start-connect.config
+  java $JVM_ARGS -jar $LIB/start.jar start-client.config
 done

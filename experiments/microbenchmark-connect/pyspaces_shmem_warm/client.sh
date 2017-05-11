@@ -11,10 +11,13 @@ mkdir -p logs
 
 reps=${1:-100}
 
-export TIMEFORMAT="r: %lR, u: %lU, s: %lS"
-
 # run once to initialize the shmem
-python client/connect.py 2> logs/connect_0.log
+python client/connect.py 2> logs/connect_i.log
+
+# warmup runs - not timed
+python client/connect.py 2> logs/connect_ii.log
+python client/connect.py 2> logs/connect_iii.log
+python client/connect.py 2> logs/connect_iv.log
 
 for i in `seq 1 $reps`; do
   time python client/connect.py 2> logs/connect_$i.log

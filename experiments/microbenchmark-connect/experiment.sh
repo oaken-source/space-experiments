@@ -2,7 +2,7 @@
 
 set -euo pipefail
 
-EXP_NAME="Connect MicroBenchmark"
+EXP_NAME="MicroBenchmark Connect"
 
 expdir=$(pwd)
 basedir=$expdir/../..
@@ -41,10 +41,12 @@ pyspaces_shmem_warm_teardown() {
 }
 
 if [ -z "${1:-}" ]; then
-  args="javaspaces pyspaces_xmlrpc pyspaces_shmem"
+  args="javaspaces pyspaces_xmlrpc pyspaces_shmem_cold pyspaces_shmem_warm"
 else
   args="$@"
 fi
+
+export TIMEFORMAT="time: %lR"
 
 for target in $args; do
   case $target in
@@ -57,8 +59,8 @@ for target in $args; do
       rm -f $expdir/$target.time
       pushd $target >/dev/null
       ./client.sh 2>&1 | while read -r line; do
-        if [[ $line =~ r:\ .*s,\ u:\ .*s,\ s:\ .*s ]]; then
-          echo "$line" >> $expdir/$target.time
+        if [[ $line =~ time:\ .*s ]]; then
+          echo "$line" | cut -d' ' -f2-  >> $expdir/$target.time
         fi
         echo "$line" | sed 's/^/    | /'
       done

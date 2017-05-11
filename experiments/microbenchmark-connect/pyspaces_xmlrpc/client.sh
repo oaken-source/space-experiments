@@ -8,7 +8,10 @@ popd >/dev/null
 
 reps=${1:-100}
 
-export TIMEFORMAT="r: %lR, u: %lU, s: %lS"
+# warmup runs - not timed
+python client/connect.py
+python client/connect.py
+python client/connect.py
 
 for i in `seq 1 $reps`; do
   time python client/connect.py
