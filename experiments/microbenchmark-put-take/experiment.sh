@@ -60,8 +60,9 @@ for target in $args; do
             ./client.sh $operation $tupletype $level 2>&1 | while read -r line; do
               if [[ $line =~ time:\ .*s ]]; then
                 echo "$line" | cut -d' ' -f2- >> $expdir/$target-$operation-$tupletype-$level.time
+              else
+                echo "$line" | sed 's/^/    | /'
               fi
-              echo "$line" | sed 's/^/    | /'
             done
             popd >/dev/null
 
