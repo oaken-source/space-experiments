@@ -24,7 +24,7 @@ fi
 
 # install pyspaces server to virtualenv
 if ! python -c 'from pyspaces import PySpaceXMLRPCClient' &> /dev/null; then
-  cd packages/pyspaces
+  pushd packages/pyspaces
   python setup.py develop
-  cd ..
+  popd
 fi
