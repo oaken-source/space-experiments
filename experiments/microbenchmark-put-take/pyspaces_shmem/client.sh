@@ -6,7 +6,7 @@ pushd ../../../ >/dev/null
 . prepare-pyspaces.sh
 popd >/dev/null
 
-rm -r logs
+rm -rf logs
 mkdir -p logs
 
 operation=$1

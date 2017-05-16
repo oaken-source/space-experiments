@@ -28,7 +28,7 @@ pyspaces_xmlrpc_setup() {
 
 pyspaces_xmlrpc_teardown() {
   pushd $serverdir/pyspaces/ >/dev/null
-  ./server.sh stop
+  ./server.sh stop || (sleep 2 && ./server.sh stop)
   popd >/dev/null
 }
 
