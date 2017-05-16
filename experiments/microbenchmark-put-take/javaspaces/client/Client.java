@@ -7,9 +7,10 @@ import net.jini.space.JavaSpace;
 
 public class Client {
 
-    private static final int warmup_iterations = 10000;
-    private static final int tuples = 10000;
-    private static final int fill_level = 1000000;
+    private static final int tuples = 100;
+    private static final int warmup_iterations = 100;
+    private static final int iterations = 100;
+    private static final int fill_level = 10000;
 
     abstract static class TupleGenerator {
         abstract Entry make();
@@ -71,6 +72,26 @@ public class Client {
                 }
             };
             break;
+          case "doublearrayxl":
+            tg = new TupleGenerator() {
+                public Entry make() {
+                    return new DoubleArrayEntry(Utils.randDoubleArray(256), Utils.randDoubleArray(256));
+                }
+                public Entry makeEmpty() {
+                    return new DoubleArrayEntry();
+                }
+            };
+            break;
+          case "doublearrayxxl":
+            tg = new TupleGenerator() {
+                public Entry make() {
+                    return new DoubleArrayEntry(Utils.randDoubleArray(2048), Utils.randDoubleArray(2048));
+                }
+                public Entry makeEmpty() {
+                    return new DoubleArrayEntry();
+                }
+            };
+            break;
           default:
             throw new RuntimeException("unknown tupletype: " + tupletype);
         }
@@ -87,15 +108,9 @@ public class Client {
         }
     }
 
-    public static void experiment_put(TupleGenerator tg, String level) throws Exception {
+    public static void experiment_put(final TupleGenerator tg, String level) throws Exception {
         System.out.println("connecting to space");
         final JavaSpace space = SpaceHelper.connect();
-
-        System.out.println("warmup space");
-        for (int i = 0; i < warmup_iterations; ++i)
-          space.write(tg.make(), null, Lease.FOREVER);
-        for (int i = 0; i < warmup_iterations; ++i)
-          space.take(tg.makeEmpty(), null, Long.MAX_VALUE);
 
         if (level.equals("filled")) {
             System.out.println("generating fill level");
@@ -108,38 +123,50 @@ public class Client {
         for (int i = 0; i < tuples; ++i)
           entries[i] = tg.make();
 
-        class PutTask implements Runnable {
-            private int i = 0;
-            public void run() {
-                try {
-                    space.write(entries[i++], null, Lease.FOREVER);
-                }
-                catch (Exception e) {
-                    throw new RuntimeException(e);
-                }
+        Runnable task = new Runnable() { public void run() {
+            try {
+                for (int i = 0; i < tuples; ++i)
+                  space.write(entries[i], null, Lease.FOREVER);
             }
-        };
-        PutTask task = new PutTask();
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } };
+
+        Runnable cleanup = new Runnable() { public void run() {
+            try {
+                for (int i = 0; i < tuples; ++i)
+                  space.take(tg.makeEmpty(), null, Long.MAX_VALUE);
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } };
+
+        System.out.println("warmup space");
+        for (int i = 0; i < warmup_iterations; ++i) {
+          task.run();
+          cleanup.run();
+        }
 
         System.out.println("performing benchmark");
-        for (int i = 0; i < tuples; ++i)
+        long times[] = new long[iterations];
+        for (int i = 0; i < iterations; ++i)
           {
             long t1 = System.nanoTime();
             task.run();
             long t2 = System.nanoTime();
-            System.out.println("time: " + (t2 - t1) + "ns");
+            times[i] = t2 - t1;
+            cleanup.run();
           }
+
+        for (int i = 0; i < iterations; ++i)
+          System.out.println("time: " + times[i] + "ns");
     }
 
     public static void experiment_take(final TupleGenerator tg, String level) throws Exception {
         System.out.println("connecting to space");
         final JavaSpace space = SpaceHelper.connect();
-
-        System.out.println("warmup space");
-        for (int i = 0; i < warmup_iterations; ++i)
-          space.write(tg.make(), null, Lease.FOREVER);
-        for (int i = 0; i < warmup_iterations; ++i)
-          space.take(tg.makeEmpty(), null, Long.MAX_VALUE);
 
         if (level.equals("filled")) {
             System.out.println("generating fill level");
@@ -147,23 +174,44 @@ public class Client {
               space.write(tg.make(), null, Lease.FOREVER);
         }
 
-        Runnable task = new Runnable() { public void run() {
+        Runnable prepare = new Runnable() { public void run() {
             try {
-                space.take(tg.makeEmpty(), null, Long.MAX_VALUE);
+                for (int i = 0; i < tuples; ++i)
+                  space.write(tg.make(), null, Lease.FOREVER);
             }
             catch (Exception e) {
                 throw new RuntimeException(e);
             }
         } };
 
+        Runnable task = new Runnable() { public void run() {
+            try {
+                for (int i = 0; i < tuples; ++i)
+                  space.take(tg.makeEmpty(), null, Long.MAX_VALUE);
+            }
+            catch (Exception e) {
+                throw new RuntimeException(e);
+            }
+        } };
+
+        System.out.println("warmup space");
+        for (int i = 0; i < warmup_iterations; ++i) {
+            prepare.run();
+            task.run();
+        }
+
         System.out.println("performing benchmark");
-        for (int i = 0; i < tuples; ++i)
+        long times[] = new long[iterations];
+        for (int i = 0; i < iterations; ++i)
           {
-            space.write(tg.make(), null, Lease.FOREVER);
+            prepare.run();
             long t1 = System.nanoTime();
             task.run();
             long t2 = System.nanoTime();
-            System.out.println("time: " + (t2 - t1) + "ns");
+            times[i] = t2 - t1;
           }
+
+        for (int i = 0; i < iterations; ++i)
+          System.out.println("time: " + times[i] + "ns");
     }
 }

@@ -48,7 +48,7 @@ for target in $args; do
   case $target in
     javaspaces|pyspaces_xmlrpc|pyspaces_shmem)
       for operation in put take; do
-        for tupletype in null int string doublearray; do
+        for tupletype in null int string doublearray doublearrayxl doublearrayxxl; do
           for level in empty filled; do
             echo "$EXP_NAME :: $target [$operation] [$tupletype] [$level]"
             echo "  -> setup"
