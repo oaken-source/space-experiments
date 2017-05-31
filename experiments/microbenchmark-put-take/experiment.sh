@@ -32,8 +32,12 @@ pyspaces_xmlrpc_teardown() {
   popd >/dev/null
 }
 
+pyspaces_shmem_setup() {
+  find /dev/shm -iname '*PutTakeMicroBenchPyspace*' -delete
+}
+
 pyspaces_shmem_teardown() {
-  find /dev/shm -iname '*connectmicrobenchpyspace*' -delete
+  find /dev/shm -iname '*PutTakeMicroBenchPyspace*' -delete
 }
 
 if [ -z "${1:-}" ]; then
@@ -44,12 +48,16 @@ fi
 
 export TIMEFORMAT="time: %lR"
 
+operations=${OPERATIONS:-put take}
+tupletypes=${TUPLETYPES:-null int string doublearray doublearrayxl doublearrayxxl}
+levels=${LEVELS:-empty filled}
+
 for target in $args; do
   case $target in
     javaspaces|pyspaces_xmlrpc|pyspaces_shmem)
-      for operation in put take; do
-        for tupletype in null int string doublearray doublearrayxl doublearrayxxl; do
-          for level in empty filled; do
+      for operation in ${operations}; do
+        for tupletype in ${tupletypes}; do
+          for level in ${levels}; do
             echo "$EXP_NAME :: $target [$operation] [$tupletype] [$level]"
             echo "  -> setup"
             type -p ${target}_setup >/dev/null && ${target}_setup | sed 's/^/    | /'

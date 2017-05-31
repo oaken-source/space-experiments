@@ -22,10 +22,7 @@ def randdoublearray(length):
     return [ random.random() for _ in range(length) ]
 
 
-def experiment_put(tg, level):
-    print("connecting to space")
-    space = pyspaces.PySpaceXMLRPCClient('http://localhost:10000')
-
+def experiment_put(space, tg, level):
     if level == "filled":
         print("generating fill level");
         for i in range(fill_level):
@@ -60,10 +57,7 @@ def experiment_put(tg, level):
         print('time: %ins' % times[i])
 
 
-def experiment_take(tg, level):
-    print("connecting to space")
-    space = pyspaces.PySpaceXMLRPCClient('http://localhost:10000')
-
+def experiment_take(space, tg, level):
     if level == "filled":
         print("generating fill level");
         for i in range(fill_level):
@@ -138,11 +132,13 @@ def main(args):
     else:
         raise Exception("unsupported tupletype %s", tupletype)
 
+    print("connecting to space")
+    space = pyspaces.PySpaceXMLRPCClient('http://localhost:10000')
 
     if operation == "put":
-        experiment_put(tg, level)
+        experiment_put(space, tg, level)
     elif operation == "take":
-        experiment_take(tg, level)
+        experiment_take(space, tg, level)
     else:
         raise Exception("unsupported operation %s", operation)
 

@@ -6,9 +6,10 @@ import string
 import random
 import pyspaces
 
-warmup_iterations = 10000
-tuples = 10000
-fill_level = 1000000
+tuples = 100
+warmup_iterations = 100
+iterations = 100
+fill_level = 10000
 
 
 def randint():
@@ -30,12 +31,31 @@ def experiment_put(space, tg, level):
     print("generating benchmark tuples");
     entries = [ next(tg) for _ in range(tuples) ]
 
+    def task():
+        for i in range(tuples):
+            space.put(entries[i])
+
+    def cleanup():
+        for i in range(tuples):
+            space.take((None, None))
+        space.optimize()
+
+    print("warmup space");
+    for i in range(warmup_iterations):
+        task()
+        cleanup()
+
     print("performing benchmark");
-    for i in range(tuples):
+    times = []
+    for i in range(iterations):
         t1 = timer()
-        space.put(entries[i])
+        task()
         t2 = timer()
-        print('time: %sns' % floor((t2 - t1) * 10**9))
+        times.append(floor((t2 - t1) * 10**9))
+        cleanup()
+
+    for i in range(iterations):
+        print('time: %ins' % times[i])
 
 
 def experiment_take(space, tg, level):
@@ -44,13 +64,32 @@ def experiment_take(space, tg, level):
         for i in range(fill_level):
             space.put(next(tg))
 
+    def prepare():
+        for i in range(tuples):
+            space.put(next(tg))
+
+    def task():
+        for i in range(tuples):
+            space.take((None, None))
+
+    print("warmup space");
+    for i in range(warmup_iterations):
+        prepare()
+        task()
+        space.optimize()
+
     print("performing benchmark");
-    for i in range(tuples):
-        space.put(next(tg))
+    times = []
+    for i in range(iterations):
+        prepare()
         t1 = timer()
-        space.take((None, None))
+        task()
         t2 = timer()
-        print('time: %sns' % floor((t2 - t1) * 10**9))
+        times.append(floor((t2 - t1) * 10**9))
+        space.optimize()
+
+    for i in range(iterations):
+        print('time: %ins' % times[i])
 
 
 def main(args):
@@ -82,6 +121,16 @@ def main(args):
         def _tg():
             while True:
                 yield (randdoublearray(32), randdoublearray(32))
+        tg = _tg()
+    elif tupletype == "doublearrayxl":
+        def _tg():
+            while True:
+                yield (randdoublearray(256), randdoublearray(256))
+        tg = _tg()
+    elif tupletype == "doublearrayxxl":
+        def _tg():
+            while True:
+                yield (randdoublearray(2048), randdoublearray(2048))
         tg = _tg()
     else:
         raise Exception("unsupported tupletype %s", tupletype)
